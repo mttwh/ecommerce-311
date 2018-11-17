@@ -16,8 +16,8 @@
 	<p>This is the page where store managers can add, remove, or update products from the site</p>
 	<br /><hr>
 	
-	<div class="login-form">
-		<form action="AdminController" method="POST">
+	<div id="login-form">
+		<form action="addProduct" method="POST">
 			<p>Product Name:</p>
 			<input type="text" name="productName">
 			<br />
@@ -36,7 +36,7 @@
 				</c:forEach>
 					</select>
 			<br /><br />
-			<input id = "button" type="submit" value="Add Product">
+			<input id = "button" type="submit" name="addProductButton" value="Add Product">
 		</form>
 	</div>
 	<div class="viewProductTable">

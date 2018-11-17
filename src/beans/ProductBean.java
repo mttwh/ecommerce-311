@@ -22,6 +22,46 @@ public class ProductBean {
 	public ProductBean() {
 		connector = new DatabaseController();
 	}
+	
+	public void addProduct(Product product) {
+		String newProductName = product.getProductName();
+		String newProductDescription = product.getProductDescription();
+		String newProductPrice = product.getProductPrice();
+		String newSelectedCategory = product.getCategoryName();
+		
+		try {
+			conn = connector.getConnection();
+			String query = "INSERT INTO product "
+					+ "(productName, productDescription, productPrice, categoryName) "
+					+ "VALUES ('" + newProductName + "', '"
+					+ newProductDescription + "', '"
+					+ newProductPrice + "', '"
+					+ newSelectedCategory + "');";	
+			statement = conn.prepareStatement(query);
+			statement.executeUpdate();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	//returns a list of all products belonging to the specified category
 	public List<Product> getProductsByCategory(String categoryName) {
@@ -80,7 +120,7 @@ public class ProductBean {
 			String query = "DELETE FROM product WHERE productName = '" + productName + "'";
 			System.out.println(query);
 			statement = conn.prepareStatement(query);	
-			statement.executeUpdate();
+			statement.executeUpdate(); //fix possible memory leak
 			
 		} catch (Exception e) {
 			e.printStackTrace();

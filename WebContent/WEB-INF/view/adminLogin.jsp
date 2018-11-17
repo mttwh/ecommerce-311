@@ -13,7 +13,7 @@
 <body>
 	<h2>Admins login below</h2>
 	<div class="login-form">
-		<form action="AdminLoginController" method="post">
+		<form action="adminLogin" method="post">
 			<p>Username: <input type="text" name="adminUsername"></p>
 			<br /><br />
 			<p>Password: <input type="password" name="adminPassword"></p>

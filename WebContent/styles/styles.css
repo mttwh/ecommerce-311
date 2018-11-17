@@ -127,7 +127,7 @@ tr:hover td form{
 
 #smallText { font-size: small }
 
-.login-form {
+#login-form {
 	margin-top: 10px;
 	float: left;
 	padding: 5px;
@@ -148,6 +148,9 @@ tr:hover td form{
 }
 
 #login-area {
+}
+
+#logout-area {
 }
 
 .category-rows {

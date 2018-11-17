@@ -38,7 +38,7 @@
 		</div>
 		<br /><br />
 		<hr>
-		<div class="login-form">
+		<div id="login-form">
 			<form id="login-area" action="login" method="POST">
 				<p>Username <input type="text" name="customerUsername"></p>
 				<br /><br />
@@ -58,6 +58,13 @@
 				<p>Admins click <a href="adminLogin">Here</a> to login</p>
 			</form>
 		</div>
+		<c:if test="${customer.customerUsername != null}">
+			<script>
+				var logoutForm = "<form id='logout-area' action='logout' method='post'>" +
+								"<input type='submit' name='logoutButton' value='Logout'></form>";
+				document.getElementById("login-form").innerHTML=logoutForm;
+			</script>
+		</c:if>
 		<div class="category-rows">
 			<table class="category-table">
 				<tr>

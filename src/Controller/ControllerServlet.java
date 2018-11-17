@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import databaseAccess.DatabaseController;
-
+import beans.AdminBean;
 import beans.CategoryBean;
 import beans.ProductBean;
 
@@ -36,75 +36,38 @@ import model.Product;
 					  "/cart",
 					  "/adminLogin",
 					  "/admin",
-					  "/deleteProduct"})
+					  "/deleteProduct",
+					  "/addProduct",
+					  "/logout"})
 public class ControllerServlet extends HttpServlet {
 	private DatabaseController connector;
 	private List<Product> categoryProductList;
 	private List<Product> allProductList;
 	private ProductBean productBean;
+	private AdminBean adminBean;
+	private CategoryBean categoryBean;
+	private String adminLoginMessage = null;
 
 	
     public ControllerServlet() {
         super();
         connector = new DatabaseController();
         productBean = new ProductBean();
+        adminBean = new AdminBean();
+        categoryBean = new CategoryBean();
+       
     }
     
     //init method called once upon application deployment.
     //category list will be stored in an application context variable for use across the application
     public void init() throws ServletException {
     	
-    	String query = "SELECT * FROM category";
     	List categoryList = new ArrayList<Category>();
-    	Connection conn = null;
-		PreparedStatement statement = null;
-		ResultSet rs = null;
+    	categoryList = categoryBean.getCategories();
+    	getServletContext().setAttribute("categories", categoryList);
     	
-    	try {
-    		conn = connector.getConnection();
-    		statement = conn.prepareStatement(query);
-    		rs = statement.executeQuery();
-
-    		while(rs.next()) {
-    			Category c = new Category();
-    			c.setCategoryName(rs.getString("categoryName"));
-    			categoryList.add(c);
-    		}
-    		
-    		//category list is saved in the application context variable 'categories'. 
-    		getServletContext().setAttribute("categories", categoryList);
-    		
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-    	finally {
-    		if(rs != null) {
-    			try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-    		}
-    		if(statement != null) {
-    			try {
-					statement.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-    		}
-    		if(conn != null) {
-    			try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-    		}
-    	}
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Category selectedCategory;
@@ -117,7 +80,7 @@ public class ControllerServlet extends HttpServlet {
 		if(userPath.equals("/admin")) {	
 			allProductList = productBean.getProducts();
 			session.setAttribute("allProductList", allProductList);
-			
+			return;
 		}
 		
 		else if(userPath.equals("/category"))
@@ -186,7 +149,63 @@ public class ControllerServlet extends HttpServlet {
 				productBean.deleteProductByName(productToDelete);
 				allProductList = productBean.getProducts();
 				session.setAttribute("allProductList", allProductList);
-				
+				request.getRequestDispatcher("admin").forward(request, response);
+				return;
+			}
+		}
+		
+		else if(userPath.equals("/addProduct")) {			
+			String productName = request.getParameter("productName");
+			String productDescription = request.getParameter("productDescription");
+			String productPrice = request.getParameter("productPrice");
+			String selectedCategory = request.getParameter("categorySelection");
+			
+			Product product = new Product(productName, productDescription, productPrice, selectedCategory);
+			
+			if(product.getProductName().isEmpty() || product.getCategoryName().isEmpty() || product.getProductPrice().isEmpty()) {
+				request.getRequestDispatcher("admin").forward(request, response);
+				System.out.println("must fill in all product fields");
+				return;
+			}
+			else if(productBean.getProductByName(productName) != null) {
+				request.getRequestDispatcher("admin").forward(request, response);
+				System.out.println("Product already exists");
+				return;
+			}
+			else {
+				productBean.addProduct(product);
+				allProductList = productBean.getProducts();
+				session.setAttribute("allProductList", allProductList);
+				request.setAttribute("product", product);
+				request.getRequestDispatcher("admin").forward(request, response);
+				System.out.println("added product");
+				return;
+			}
+		}
+		
+		else if(userPath.equals("/logout")) {
+			session.invalidate();
+			request.getRequestDispatcher("/").forward(request, response);
+			return;
+		}
+		
+		else if(userPath.equals("/adminLogin")) {
+			String username = request.getParameter("adminUsername");
+			String password = request.getParameter("adminPassword");
+			String adminLoginResponse = adminBean.checkAdmin(username, password);
+			
+			if(adminLoginResponse.equals("success")) {
+				adminLoginMessage = "success";
+				request.setAttribute("adminLoginMessage", adminLoginMessage);
+				request.getRequestDispatcher("/admin").forward(request, response);;
+				return;
+			}
+			else {
+				adminLoginMessage = "fail";
+				request.setAttribute("adminLoginMessage", adminLoginMessage);
+				request.getRequestDispatcher("/adminLogin");
+				doGet(request, response);
+				return;
 			}
 		}
 		
