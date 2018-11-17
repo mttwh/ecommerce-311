@@ -11,6 +11,23 @@
 		<link rel="stylesheet" href="styles/styles.css">
 	</head>
 	<body>
+		<div id="hello-user"></div>
+		<c:set var="customer" scope="session" value="${customer}"/>
+		<c:choose>
+			<c:when test="${customer.customerUsername == null}">
+				<script>
+					var welcome = "Login below to get started";
+					document.getElementById("hello-user").innerHTML=welcome;
+				</script>
+			</c:when>
+			<c:otherwise>
+				<script>
+					var welcome = "${customer.customerUsername}";
+					document.getElementById("hello-user").innerHTML="Welcome " + welcome;
+				</script>
+			</c:otherwise>
+		</c:choose>
+		<hr>
 		<div>
 			<ul class="main-nav">
 				<li class="active-link"><a href="#">Home</a></li>
@@ -22,11 +39,20 @@
 		<br /><br />
 		<hr>
 		<div class="login-form">
-			<form action="LoginController" method="POST">
+			<form id="login-area" action="login" method="POST">
 				<p>Username <input type="text" name="customerUsername"></p>
 				<br /><br />
 				<p>Password <input type="password" name="customerPassword"></p>
-				<br /><br />
+				<div>
+					<br /><c:choose>
+						  	<c:when test="${message == 'success'}">
+						  		<span id="success-popup">Login successful!</span>
+						  	</c:when>
+						  	<c:when test="${message == 'fail'}">
+						  		<span id="fail-popup">Login unsuccessful, try again.</span>
+						  	</c:when>
+						  </c:choose>
+				</div>
 				<input id = "button" type="submit" value="Login">
 				<p>Not yet registered? <a href="register">Click Here</a></p>
 				<p>Admins click <a href="adminLogin">Here</a> to login</p>

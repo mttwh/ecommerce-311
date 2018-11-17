@@ -39,6 +39,35 @@
 			<input id = "button" type="submit" value="Add Product">
 		</form>
 	</div>
+	<div class="viewProductTable">
+		<table class="productTable">
+			<tr>
+				<th>Product Name</th>
+				<th>Product Description</th>
+				<th>Product Price</th>
+				<th>Update Product</th>
+			</tr>
+			<tr>
+				<%--table data containing all products c for each --%>
+			</tr>
+		</table>
+	</div>
+	<div id="addProductMessage"></div>
+	<c:set var="product" scope="request" value="${product}"/>
+	<c:choose>
+		<c:when test="${product.productName == null}">
+			<script>
+				var message = "<span id='smallText'>Fill in above form to add product to inventory.</span>";
+				document.getElementById("addProductMessage").innerHTML=message;
+			</script>
+		</c:when>
+		<c:otherwise>
+			<script>
+				var message = "<span id='success-popup'>You have added ${product.productName} to the ${product.categoryName} category.</span>";
+				document.getElementById("addProductMessage").innerHTML=message;
+			</script>
+		</c:otherwise>
+	</c:choose>
 
 </body>
 </html>

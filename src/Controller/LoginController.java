@@ -12,85 +12,87 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import databaseAccess.DatabaseController;
-
 import model.Customer;
 
-@WebServlet("/LoginController")
+/**
+ * Servlet implementation class LogoutController
+ */
+@WebServlet("/login")
 public class LoginController extends HttpServlet {
 	private DatabaseController connector;
-       
+	String message = null;
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
     public LoginController() {
         super();
         connector = new DatabaseController();
     }
 
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		HttpSession session = request.getSession(false);
+		RequestDispatcher req = request.getRequestDispatcher("index.jsp");
+		session.invalidate();
+		System.out.println("jjj");
+		req.forward(request, response);
+		//response.sendRedirect("index.jsp");	
 	}
-    /*
-	users will enter login info on the home page and if there is a username-password match for a 
-	Customer in the database then the user will be successfully logged in.
-	need to add user session functionality to make user login mean anything
-	*/
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		Connection conn = null;
 		PreparedStatement statement = null;
 		ResultSet rs = null;
-			
 		
+		String username = request.getParameter("customerUsername");
+		String password = request.getParameter("customerPassword");
+		
+		RequestDispatcher req = request.getRequestDispatcher("index.jsp");
+		String sql = ("SELECT * FROM customer WHERE "
+				+ "customerUsername = '" + username + "' AND "
+				+ "customerPassword = '" + password + "'");
+
 		try {
+			
 			conn = connector.getConnection();
 			
+			statement = conn.prepareStatement(sql);
+			rs = statement.executeQuery();
 			
-			String username = request.getParameter("customerUsername");
-			String password = request.getParameter("customerPassword");
-			
-			if(username.isEmpty() || password.isEmpty())
+			if(rs.next())
 			{
-				RequestDispatcher req = request.getRequestDispatcher("index.jsp");
-				req.include(request, response);
-			}
-			
-			//will improve this functionality asap (save admin username and password in database and check it here)
-			else if(username.equals("admin") && password.equals("admin")) {
-				RequestDispatcher req = request.getRequestDispatcher("admin");
+				HttpSession session = request.getSession(true);
+				Customer customer = new Customer();
+				customer.setCustomerUsername(username);
+				customer.setCustomerPassword(password);
+				session.setAttribute("customer", customer);
+				message = "success";
+				request.setAttribute("message", message);
+				req = request.getRequestDispatcher("index.jsp");
 				req.forward(request, response);
 			}
-			
-			else
-			{
-				String sql = ("SELECT * FROM customer WHERE "
-						+ "customerUsername = '" + username + "' AND "
-						+ "customerPassword = '" + password + "'");
-
-				statement = conn.prepareStatement(sql);
-				rs = statement.executeQuery();
-				
-				//Check if there is Customer result from the username-password combination entered
-				if(rs.next())
-				{
-					//check if boolean value isAdmin is true (reminder to do this)
-					
-					//change to session.setAttribute to add user to the session
-					request.setAttribute("customerUsername", username);
-					RequestDispatcher req = request.getRequestDispatcher("index.jsp");
-					req.forward(request, response);
-				}
-				else
-				{
-					System.out.println("Invalid Password");
-					response.sendRedirect("index.jsp");
-				}
-
+			else if(username == null || password == null) {
+				message = "fail";
+				request.setAttribute("message", message);
+				req.forward(request, response);
+			}
+			else {
+				message = "fail";
+				request.setAttribute("message", message);
+				req.forward(request, response);
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 		finally {
 			if(rs != null) {
 				try {
@@ -114,6 +116,7 @@ public class LoginController extends HttpServlet {
 				}
 			}
 		}
+
 		
 	}
 

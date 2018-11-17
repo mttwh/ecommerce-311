@@ -113,7 +113,7 @@ tr:hover td img{
 	color: white;
 }
 
-.smallText { font-size: small }
+#smallText { font-size: small }
 
 .login-form {
 	margin-top: 10px;
@@ -123,6 +123,21 @@ tr:hover td img{
 	width: 25%;
 }
 
+.viewProductTable {
+	width: 70%;
+	float: left;
+	margin-left: 5px;
+}
+
+#addProductMessage {
+	margin-top: -45px;
+	width:25%;
+	float: left;
+}
+
+#login-area {
+}
+
 .category-rows {
 	float: left;
 	width: 70%;
@@ -130,4 +145,24 @@ tr:hover td img{
 
 .selectedCategoryTitle {
 	text-align: center;
+}
+
+#success-popup {
+	font-size: small;
+	color: green;
+}
+
+#fail-popup {
+	font-size: small;
+	color: red;
+}
+
+.productTable {
+	height: 400px;
+	overflow-y: scroll;
+	display: block;
+}
+
+#hello-user {
+	
 }
