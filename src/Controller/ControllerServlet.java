@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,10 +35,12 @@ import model.Product;
 					  "/addToCart",
 					  "/cart",
 					  "/adminLogin",
-					  "/admin"})
+					  "/admin",
+					  "/deleteProduct"})
 public class ControllerServlet extends HttpServlet {
 	private DatabaseController connector;
-	private List<Product> productList;
+	private List<Product> categoryProductList;
+	private List<Product> allProductList;
 	private ProductBean productBean;
 
 	
@@ -111,7 +114,13 @@ public class ControllerServlet extends HttpServlet {
 		
 		String userPath = request.getServletPath();
 
-		if(userPath.equals("/category"))
+		if(userPath.equals("/admin")) {	
+			allProductList = productBean.getProducts();
+			session.setAttribute("allProductList", allProductList);
+			
+		}
+		
+		else if(userPath.equals("/category"))
 		{
 			String categoryName = request.getQueryString();
 			
@@ -119,9 +128,9 @@ public class ControllerServlet extends HttpServlet {
 			{
 				selectedCategory = categoryBean.getCategoryByName(categoryName);
 				session.setAttribute("selectedCategory", selectedCategory);
-				productList = productBean.getProductsByCategory(categoryName);
+				categoryProductList = productBean.getProductsByCategory(categoryName);
 				
-				session.setAttribute("productList", productList);
+				session.setAttribute("categoryProductList", categoryProductList);
 			}
 		}
 		
@@ -147,6 +156,8 @@ public class ControllerServlet extends HttpServlet {
 		String userPath = request.getServletPath();
 		HttpSession session = request.getSession();
 		Cart cart = (Cart) session.getAttribute("shoppingCart");
+		RequestDispatcher req = request.getRequestDispatcher(userPath);
+
 		
 		if(userPath.equals("/addToCart")) {
 			
@@ -166,6 +177,17 @@ public class ControllerServlet extends HttpServlet {
 			}
 
 			userPath = "/category";
+		}
+		
+		else if(userPath.equals("/deleteProduct")) {
+			if(request.getParameter("deleteButton") != null) {
+				userPath = "/admin";
+				String productToDelete = request.getParameter("productToDelete");
+				productBean.deleteProductByName(productToDelete);
+				allProductList = productBean.getProducts();
+				session.setAttribute("allProductList", allProductList);
+				
+			}
 		}
 		
 		String url = "/WEB-INF/view" + userPath + ".jsp";

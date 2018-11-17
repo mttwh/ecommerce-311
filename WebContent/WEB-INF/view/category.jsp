@@ -34,7 +34,7 @@
 			</tr>
 			<%-- Receive list of products relevant to the selected category 
 			and display them on the screen - product list received from ControllerServlet doGet method --%>
-			<c:forEach var="product" items="${productList}">
+			<c:forEach var="product" items="${categoryProductList}">
 		
 				<tr>
 					<td><img class="product-image" 

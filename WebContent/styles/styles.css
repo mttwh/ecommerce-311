@@ -56,6 +56,10 @@ tr td img{
 	background-color: #BDE3FD;
 }
 
+tr td form {
+	background-color: #BDE3FD;
+}
+
 tr:nth-child(even) td{
 	background-color: #f2f2f2;
 }
@@ -65,6 +69,10 @@ tr:nth-child(even) td p{
 }
 
 tr:nth-child(even) td img{
+	background-color: #f2f2f2;
+}
+
+tr:nth-child(even) td form {
 	background-color: #f2f2f2;
 }
 
@@ -78,6 +86,10 @@ tr:hover td p{
 }
 
 tr:hover td img{
+	background-color: #002C8B;
+}
+
+tr:hover td form{
 	background-color: #002C8B;
 }
 

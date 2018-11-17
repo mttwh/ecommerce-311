@@ -47,9 +47,21 @@
 				<th>Product Price</th>
 				<th>Update Product</th>
 			</tr>
-			<tr>
-				<%--table data containing all products c for each --%>
-			</tr>
+			<c:forEach var="product" items="${allProductList}">
+				<tr>
+					<td>${product.productName}</td>
+					<td>${product.productDescription}</td>
+					<td>${product.productPrice}</td>
+					<td>
+						<div id="productButtons">
+							<form action="deleteProduct" method="post">
+								<input type="hidden" name="productToDelete" value="${product.productName}">
+								<input type="submit" name="deleteButton" value="Delete">
+							</form>
+						</div>
+					</td>
+				</tr>
+			</c:forEach>
 		</table>
 	</div>
 	<div id="addProductMessage"></div>
