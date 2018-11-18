@@ -1,5 +1,7 @@
 package model;
 
+import java.text.DecimalFormat;
+
 import model.Product;
 
 public class CartItem {
@@ -11,6 +13,10 @@ public class CartItem {
 	public CartItem(Product product) {
 		this.setProduct(product);
 		setQuantity(1);
+	}
+	
+	public CartItem() {
+		
 	}
 
 	public int getQuantity() {
@@ -41,8 +47,11 @@ public class CartItem {
 		quantity--;
 	}
 	
+	//change to big decimal
 	public double getItemTotal() {
 		double itemTotal = quantity * Double.parseDouble(product.getProductPrice());
+		DecimalFormat df = new DecimalFormat("#.##");
+		itemTotal = Double.valueOf(df.format(itemTotal));
 		return itemTotal;
 	}
 

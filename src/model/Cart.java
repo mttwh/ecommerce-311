@@ -36,8 +36,26 @@ public class Cart {
 		}
 	}
 	
+	public void removeItemByName(String itemName) {
+		for(int i = 0; i < getCartItems().size(); i++) {
+			if(getCartItems().get(i).getProductName().equals(itemName)) {
+				getCartItems().remove(i);
+			}
+		}
+	}
+	
 	public List<CartItem> getCartItems() {
 		return cartItems;
+	}
+	
+	public CartItem getCartItemByName(String itemName) {
+		CartItem item = new CartItem();
+		for(int i = 0; i < getCartItems().size(); i++) {
+			if(getCartItems().get(i).getProductName().equals(itemName)) {
+				item = getCartItems().get(i);
+			}
+		}
+		return item;
 	}
 	
 	public double calculateTotal() {

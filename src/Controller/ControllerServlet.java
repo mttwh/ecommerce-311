@@ -1,11 +1,6 @@
 package Controller;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -38,7 +33,8 @@ import model.Product;
 					  "/admin",
 					  "/deleteProduct",
 					  "/addProduct",
-					  "/logout"})
+					  "/logout",
+					  "/updateQuantity"})
 public class ControllerServlet extends HttpServlet {
 	private DatabaseController connector;
 	private List<Product> categoryProductList;
@@ -197,6 +193,8 @@ public class ControllerServlet extends HttpServlet {
 			if(adminLoginResponse.equals("success")) {
 				adminLoginMessage = "success";
 				request.setAttribute("adminLoginMessage", adminLoginMessage);
+				allProductList = productBean.getProducts();
+				session.setAttribute("allProductList", allProductList);
 				request.getRequestDispatcher("/admin").forward(request, response);;
 				return;
 			}
@@ -205,6 +203,30 @@ public class ControllerServlet extends HttpServlet {
 				request.setAttribute("adminLoginMessage", adminLoginMessage);
 				request.getRequestDispatcher("/adminLogin");
 				doGet(request, response);
+				return;
+			}
+		}
+		
+		else if(userPath.equals("/updateQuantity")) {
+
+			String productToUpdate = request.getParameter("productNameToUpdate");
+			
+			if(request.getParameter("increaseQuantity") != null) {
+				cart.getCartItemByName(productToUpdate).increaseQuantity();
+				request.getRequestDispatcher("cart").forward(request, response);
+				return;
+			}
+			else if(request.getParameter("decreaseQuantity") != null) {
+				cart.getCartItemByName(productToUpdate).decreaseQuantity();
+				if(cart.getCartItemByName(productToUpdate).getQuantity() == 0) {
+					cart.removeItemByName(productToUpdate);
+				}
+				request.getRequestDispatcher("cart").forward(request, response);
+				return;
+			}
+			else if(request.getParameter("removeItem") != null) {
+				cart.removeItemByName(productToUpdate);
+				request.getRequestDispatcher("cart").forward(request, response);
 				return;
 			}
 		}

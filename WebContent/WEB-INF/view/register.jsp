@@ -21,7 +21,7 @@
 	<br /><br />
 	<hr>
 	<h2>Create customer account below!</h2>
-	<div class="login-form">
+	<div id="login-form">
 		<form action="RegistrationController" method="POST">
 			<p>Name</p>
 			<input type="text" name="customerName">

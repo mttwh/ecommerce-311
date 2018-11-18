@@ -12,7 +12,7 @@
 </head>
 <body>
 	<h2>Admins login below</h2>
-	<div class="login-form">
+	<div id="login-form">
 		<form action="adminLogin" method="post">
 			<p>Username: <input type="text" name="adminUsername"></p>
 			<br /><br />
@@ -20,7 +20,7 @@
 			<br /><c:if test="${adminLoginMessage == 'fail'}">
 				  	<span id="fail-popup">Login unsuccessful</span>
 				  </c:if>
-			<input id="button" type="submit" value="Admin Login">
+			<br /><input id="button" type="submit" value="Admin Login">
 		</form>
 	</div>
 </body>

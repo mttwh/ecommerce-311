@@ -69,7 +69,7 @@
 	<c:choose>
 		<c:when test="${product.productName == null}">
 			<script>
-				var message = "<span id='smallText'>Fill in above form to add product to inventory.</span>";
+				var message = "<span class='smallText'>Fill in above form to add product to inventory.</span>";
 				document.getElementById("addProductMessage").innerHTML=message;
 			</script>
 		</c:when>

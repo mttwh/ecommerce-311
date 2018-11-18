@@ -125,7 +125,7 @@ tr:hover td form{
 	color: white;
 }
 
-#smallText { font-size: small }
+.smallText { font-size: small }
 
 #login-form {
 	margin-top: 10px;
@@ -180,4 +180,11 @@ tr:hover td form{
 
 #hello-user {
 	
+}
+
+#quantityButtons form input {
+	background-color: blue;
+	color: white;
+	height: 20px;
+	font-size: small;
 }

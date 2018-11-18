@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+ <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="../jspf/header.jspf" />
@@ -40,12 +40,20 @@
 					${product.productName}
 				</td>
 				<td>
-					${item.itemTotal}
+					$${item.itemTotal}
 					<br />
-					<p class="smallText">${product.productPrice} / item </p>
+					<p class="smallText">$${product.productPrice} / item </p>
 				</td>
 				<td>
 					${item.quantity} items
+					<div id="quantityButtons">
+						<form action="updateQuantity" method="post">
+							<input type="hidden" name="productNameToUpdate" value="${product.productName}">
+							<input type="submit" name="increaseQuantity" value="Increase Quantity"><br />
+							<input type="submit" name="decreaseQuantity" value="Decrease Quantity"><br />
+							<input type="submit" name="removeItem" value="Remove Item">
+						</form>
+					</div>
 				</td>
 				
 			</tr>

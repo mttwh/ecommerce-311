@@ -40,9 +40,9 @@
 		<hr>
 		<div id="login-form">
 			<form id="login-area" action="login" method="POST">
-				<p>Username <input type="text" name="customerUsername"></p>
-				<br /><br />
-				<p>Password <input type="password" name="customerPassword"></p>
+				<p>Username <br /> <input type="text" name="customerUsername"></p>
+				<br />
+				<p>Password <br /> <input type="password" name="customerPassword"></p>
 				<div>
 					<br /><c:choose>
 						  	<c:when test="${message == 'success'}">
