@@ -34,7 +34,8 @@ import model.Product;
 					  "/deleteProduct",
 					  "/addProduct",
 					  "/logout",
-					  "/updateQuantity"})
+					  "/updateQuantity",
+					  "/updateProduct"})
 public class ControllerServlet extends HttpServlet {
 	private DatabaseController connector;
 	private List<Product> categoryProductList;
@@ -73,16 +74,10 @@ public class ControllerServlet extends HttpServlet {
 		
 		String userPath = request.getServletPath();
 
-		if(userPath.equals("/admin")) {	
-			allProductList = productBean.getProducts();
-			session.setAttribute("allProductList", allProductList);
-			return;
-		}
-		
-		else if(userPath.equals("/category"))
+		if(userPath.equals("/category"))
 		{
 			String categoryName = request.getQueryString();
-			
+
 			if (categoryName != null) 
 			{
 				selectedCategory = categoryBean.getCategoryByName(categoryName);
@@ -91,11 +86,6 @@ public class ControllerServlet extends HttpServlet {
 				
 				session.setAttribute("categoryProductList", categoryProductList);
 			}
-		}
-		
-		else if (userPath.equals("/cart"))
-		{
-			
 		}
 		
 		String url = "/WEB-INF/view" + userPath + ".jsp";
@@ -140,14 +130,15 @@ public class ControllerServlet extends HttpServlet {
 		
 		else if(userPath.equals("/deleteProduct")) {
 			if(request.getParameter("deleteButton") != null) {
-				userPath = "/admin";
 				String productToDelete = request.getParameter("productToDelete");
 				productBean.deleteProductByName(productToDelete);
 				allProductList = productBean.getProducts();
 				session.setAttribute("allProductList", allProductList);
-				request.getRequestDispatcher("admin").forward(request, response);
+				request.getRequestDispatcher("/admin").forward(request, response);
 				return;
 			}
+
+			
 		}
 		
 		else if(userPath.equals("/addProduct")) {			
@@ -159,12 +150,12 @@ public class ControllerServlet extends HttpServlet {
 			Product product = new Product(productName, productDescription, productPrice, selectedCategory);
 			
 			if(product.getProductName().isEmpty() || product.getCategoryName().isEmpty() || product.getProductPrice().isEmpty()) {
-				request.getRequestDispatcher("admin").forward(request, response);
+				request.getRequestDispatcher("/admin").forward(request, response);
 				System.out.println("must fill in all product fields");
 				return;
 			}
 			else if(productBean.getProductByName(productName) != null) {
-				request.getRequestDispatcher("admin").forward(request, response);
+				request.getRequestDispatcher("/admin").forward(request, response);
 				System.out.println("Product already exists");
 				return;
 			}
@@ -173,7 +164,7 @@ public class ControllerServlet extends HttpServlet {
 				allProductList = productBean.getProducts();
 				session.setAttribute("allProductList", allProductList);
 				request.setAttribute("product", product);
-				request.getRequestDispatcher("admin").forward(request, response);
+				request.getRequestDispatcher("/admin").forward(request, response);
 				System.out.println("added product");
 				return;
 			}
@@ -189,19 +180,17 @@ public class ControllerServlet extends HttpServlet {
 			String username = request.getParameter("adminUsername");
 			String password = request.getParameter("adminPassword");
 			String adminLoginResponse = adminBean.checkAdmin(username, password);
-			
 			if(adminLoginResponse.equals("success")) {
 				adminLoginMessage = "success";
 				request.setAttribute("adminLoginMessage", adminLoginMessage);
 				allProductList = productBean.getProducts();
 				session.setAttribute("allProductList", allProductList);
-				request.getRequestDispatcher("/admin").forward(request, response);;
+				request.getRequestDispatcher("/admin").forward(request, response);
 				return;
 			}
 			else {
 				adminLoginMessage = "fail";
 				request.setAttribute("adminLoginMessage", adminLoginMessage);
-				request.getRequestDispatcher("/adminLogin");
 				doGet(request, response);
 				return;
 			}
@@ -213,7 +202,7 @@ public class ControllerServlet extends HttpServlet {
 			
 			if(request.getParameter("increaseQuantity") != null) {
 				cart.getCartItemByName(productToUpdate).increaseQuantity();
-				request.getRequestDispatcher("cart").forward(request, response);
+				request.getRequestDispatcher("/cart").forward(request, response);
 				return;
 			}
 			else if(request.getParameter("decreaseQuantity") != null) {
@@ -221,15 +210,41 @@ public class ControllerServlet extends HttpServlet {
 				if(cart.getCartItemByName(productToUpdate).getQuantity() == 0) {
 					cart.removeItemByName(productToUpdate);
 				}
-				request.getRequestDispatcher("cart").forward(request, response);
+				request.getRequestDispatcher("/cart").forward(request, response);
 				return;
 			}
 			else if(request.getParameter("removeItem") != null) {
 				cart.removeItemByName(productToUpdate);
-				request.getRequestDispatcher("cart").forward(request, response);
+				request.getRequestDispatcher("/cart").forward(request, response);
 				return;
 			}
 		}
+		
+		else if(userPath.equals("/updateProduct")) {
+			String productToUpdateName = request.getParameter("productToUpdate");
+			Product productToUpdate = productBean.getProductByName(productToUpdateName);
+			request.setAttribute("productToUpdate", productToUpdate);
+
+			if(request.getParameter("updateProductButton") != null) {
+				String newProductName = request.getParameter("newProductName");
+				String newProductDescription = request.getParameter("newProductDescription");
+				String newProductPrice = request.getParameter("newProductPrice");
+				String newProductCategory = request.getParameter("newProductCategory");
+				String oldProductName = request.getParameter("oldProductName");
+				
+				Product newProduct = new Product(newProductName, newProductDescription, newProductPrice, newProductCategory);
+				productBean.replaceProduct(newProduct, oldProductName);
+				
+				request.getRequestDispatcher("/admin").forward(request, response);
+				return;
+			}
+		}
+		
+		else if(userPath.equals("/admin")) {
+			allProductList = productBean.getProducts();
+			session.setAttribute("allProductList", allProductList);
+		}
+		
 		
 		String url = "/WEB-INF/view" + userPath + ".jsp";
 		

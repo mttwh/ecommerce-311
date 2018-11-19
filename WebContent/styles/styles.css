@@ -126,6 +126,10 @@ tr:hover td form{
 }
 
 .smallText { font-size: small }
+.smallLightText {
+	font-size: small;
+	color: #808080;
+}
 
 #login-form {
 	margin-top: 10px;
@@ -187,4 +191,23 @@ tr:hover td form{
 	color: white;
 	height: 20px;
 	font-size: small;
+}
+
+#admin-return {
+	border: 1px solid black;
+	float: right;
+}
+
+#admin-return input {
+	margin: 5px;
+}
+
+#update-product-form {
+	border: 1px solid black;
+	float: left;
+	width: 40%;
+}
+
+#update-product-form input {
+	margin: 5px;
 }

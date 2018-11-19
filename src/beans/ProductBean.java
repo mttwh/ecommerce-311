@@ -23,6 +23,17 @@ public class ProductBean {
 		connector = new DatabaseController();
 	}
 	
+	public void replaceProduct(Product product, String oldProductName) {
+		String newProductName = product.getProductName();
+		String newProductDescription = product.getProductDescription();
+		String newProductPrice = product.getProductPrice();
+		String newSelectedCategory = product.getCategoryName();
+		Product newProduct = new Product(newProductName, newProductDescription, newProductPrice, newSelectedCategory);
+		
+		deleteProductByName(oldProductName);
+		addProduct(newProduct);
+	}
+	
 	public void addProduct(Product product) {
 		String newProductName = product.getProductName();
 		String newProductDescription = product.getProductDescription();

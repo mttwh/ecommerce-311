@@ -34,7 +34,7 @@
 				<c:forEach var="category" items="${categories}">
 					<option>${category.categoryName}</option>
 				</c:forEach>
-					</select>
+			</select>
 			<br /><br />
 			<input id = "button" type="submit" name="addProductButton" value="Add Product">
 		</form>
@@ -57,6 +57,10 @@
 							<form action="deleteProduct" method="post">
 								<input type="hidden" name="productToDelete" value="${product.productName}">
 								<input type="submit" name="deleteButton" value="Delete">
+							</form>
+							<form action="updateProduct" method="post">
+								<input type="hidden" name="productToUpdate" value="${product.productName}">
+								<input type="submit" name="updateButton" value="Update Product">
 							</form>
 						</div>
 					</td>
