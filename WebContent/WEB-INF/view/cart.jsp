@@ -49,9 +49,12 @@
 					<div id="quantityButtons">
 						<form action="updateQuantity" method="post">
 							<input type="hidden" name="productNameToUpdate" value="${product.productName}">
-							<input type="submit" name="increaseQuantity" value="Increase Quantity"><br />
-							<input type="submit" name="decreaseQuantity" value="Decrease Quantity"><br />
-							<input type="submit" name="removeItem" value="Remove Item">
+							<input type="submit" name="increaseQuantity" value="Increase Quantity"
+							  onclick="return confirm('Are you sure you want to increase the quantity of ${product.productName} in your cart?')"><br />
+							<input type="submit" name="decreaseQuantity" value="Decrease Quantity"
+							  onclick="return confirm('Are you sure you want to decrease the quantity of ${product.productName} in your cart?')"><br />
+							<input type="submit" name="removeItem" value="Remove Item"
+							  onclick="return confirm('Are you sure you want to remove ${product.productName} from your cart?')">
 						</form>
 					</div>
 				</td>

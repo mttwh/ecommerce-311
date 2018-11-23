@@ -4,7 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import databaseAccess.DatabaseController;
 import java.sql.Connection;
@@ -14,13 +16,13 @@ import model.Product;
 
 public class ProductBean {
 	
-	private DatabaseController connector;
+	private ConnectionBean connectionBean;
 	Connection conn = null;
 	PreparedStatement statement = null;
 	ResultSet rs = null;
 	
 	public ProductBean() {
-		connector = new DatabaseController();
+		connectionBean = new ConnectionBean();
 	}
 	
 	public void replaceProduct(Product product, String oldProductName) {
@@ -30,8 +32,13 @@ public class ProductBean {
 		String newSelectedCategory = product.getCategoryName();
 		Product newProduct = new Product(newProductName, newProductDescription, newProductPrice, newSelectedCategory);
 		
-		deleteProductByName(oldProductName);
-		addProduct(newProduct);
+		try {
+			deleteProductByName(oldProductName);
+			addProduct(newProduct);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void addProduct(Product product) {
@@ -39,230 +46,105 @@ public class ProductBean {
 		String newProductDescription = product.getProductDescription();
 		String newProductPrice = product.getProductPrice();
 		String newSelectedCategory = product.getCategoryName();
-		
+		String query = "INSERT INTO product "
+				+ "(productName, productDescription, productPrice, categoryName) "
+				+ "VALUES ('" + newProductName + "', '"
+				+ newProductDescription + "', '"
+				+ newProductPrice + "', '"
+				+ newSelectedCategory + "');";	
 		try {
-			conn = connector.getConnection();
-			String query = "INSERT INTO product "
-					+ "(productName, productDescription, productPrice, categoryName) "
-					+ "VALUES ('" + newProductName + "', '"
-					+ newProductDescription + "', '"
-					+ newProductPrice + "', '"
-					+ newSelectedCategory + "');";	
-			statement = conn.prepareStatement(query);
-			statement.executeUpdate();
+
+			connectionBean.executeBeanUpdate(query);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		finally {
-			if(statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
 	}
-
-	//returns a list of all products belonging to the specified category
+	
+	
 	public List<Product> getProductsByCategory(String categoryName) {
 		try {
 			List<Product> productList = new ArrayList<>();
-			conn = connector.getConnection();
+			String name, description, price, category = null;
 			String query = "SELECT * FROM product WHERE categoryName = '" + categoryName + "';";
-			statement = conn.prepareStatement(query);
-			rs = statement.executeQuery();
+			List<List<String>> productValues = connectionBean.executeBeanQuery(query);
 			
-			while(rs.next())
-			{
-				String productName = rs.getString("productName");
-				String productDescription = rs.getString("productDescription");
-				String productPrice = rs.getString("productPrice");
-				String productCategory = rs.getString("categoryName");
-				
-				Product product = new Product(productName, productDescription, productPrice, productCategory);
-				productList.add(product);
+			for(int i = 0; i < productValues.size(); i++) {
+				name = productValues.get(i).get(1);
+				description = productValues.get(i).get(2);
+				price = productValues.get(i).get(3);
+				category = productValues.get(i).get(4);
+
+				Product tempProduct = new Product(name, description, price, category);
+				productList.add(tempProduct);
 			}
+			
 			return productList;
 		}
-		catch(Exception e) {e.printStackTrace(); }
-		finally {
-			if(rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
 	
 	public void deleteProductByName(String productName) {
 		try {
-			conn = connector.getConnection();
 			String query = "DELETE FROM product WHERE productName = '" + productName + "'";
-			System.out.println(query);
-			statement = conn.prepareStatement(query);	
-			statement.executeUpdate(); //fix possible memory leak
-			
-		} catch (Exception e) {
+			connectionBean.executeBeanUpdate(query);
+		}
+		catch(Exception e) {
 			e.printStackTrace();
 		}
-		finally {
-			if(statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		
 	}
+	
 	
 	public List<Product> getProducts() {
 		try {
 			List<Product> allProductList = new ArrayList<>();
-			conn = connector.getConnection();
 			String query = "SELECT * FROM product;";
-			statement = conn.prepareStatement(query);
-			rs = statement.executeQuery();
-			
-			while(rs.next()) {
-				String productName = rs.getString("productName");
-				String productDescription = rs.getString("productDescription");
-				String productPrice = rs.getString("productPrice");
-				String productCategory = rs.getString("categoryName");
-				
-				Product product = new Product(productName, productDescription, productPrice, productCategory);
-				allProductList.add(product);
+			String name, description, price, category = null;
+			List<List<String>> productValues = connectionBean.executeBeanQuery(query);
+
+			for(int i = 0; i < productValues.size(); i++) {
+				name = productValues.get(i).get(1);
+				description = productValues.get(i).get(2);
+				price = productValues.get(i).get(3);
+				category = productValues.get(i).get(4);
+
+				Product tempProduct = new Product(name, description, price, category);
+				allProductList.add(tempProduct);
 			}
+			
 			return allProductList;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		finally {
-			if(rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
 		return null;
 	}
-	
+
 	public Product getProductByName(String productName) {
-		
-		Connection conn = null;
-		PreparedStatement statement = null;
-		ResultSet rs = null;
+		String query = "SELECT * FROM product WHERE productName = '" + productName + "';";
+		String name, description, price, category = null;
+		List<List<String>> gottenProduct = null;
+		Product tempProduct = null;
 		
 		try {
-			conn = connector.getConnection();
-			String query = "SELECT * FROM product WHERE productName = '" + productName + "';";
-			statement = conn.prepareStatement(query);
-			rs = statement.executeQuery();
-			
-			while(rs.next())
-			{
-				String prodName = rs.getString("productName");
-				String prodDescription = rs.getString("productDescription");
-				String prodPrice = rs.getString("productPrice");
-				String prodCategory = rs.getString("categoryName");
-				Product product = new Product(prodName, prodDescription, prodPrice, prodCategory);
-				return product;
+			gottenProduct = connectionBean.executeBeanQuery(query);
+			for(int i = 0; i < gottenProduct.size(); i++) {
+				name = gottenProduct.get(i).get(1);
+				description = gottenProduct.get(i).get(2);
+				price = gottenProduct.get(i).get(3);
+				category = gottenProduct.get(i).get(4);
+
+				tempProduct = new Product(name, description, price, category);
 			}
-			
-			
-		} catch (SQLException e) {
+			return tempProduct;
+		}
+
+		catch(Exception e) {
 			e.printStackTrace();
 		}
-		finally {
-			if(rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
 		return null;
-
-		
 	}
-
 }

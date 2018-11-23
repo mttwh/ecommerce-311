@@ -1,125 +1,59 @@
 package beans;
 
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import databaseAccess.DatabaseController;
-
 
 import model.Category;
 
+
 public class CategoryBean {
 	
-	private DatabaseController connector;
-	private Connection conn = null;
-	private PreparedStatement statement = null;
-	private ResultSet rs = null;
-	private List<Category> categoryList = new ArrayList<>();
+	private ConnectionBean connectionBean;
 
 	
 	public CategoryBean() {
-		connector = new DatabaseController();
+		connectionBean = new ConnectionBean();
 	}
 	
 	public List<Category> getCategories() {
+		String query = "SELECT * FROM category";
+		List<List<String>> categoryQueryList = null;
+		List<Category> categoryList = new ArrayList<>();
+		String categoryName = null;
 		
 		try {
-			conn = connector.getConnection();
-			String query = "SELECT * FROM category";
-			statement = conn.prepareStatement(query);
-			rs = statement.executeQuery();
-			
-			while(rs.next()) {
-				Category c = new Category();
-				c.setCategoryName(rs.getString("categoryName"));
-				categoryList.add(c);
+			categoryQueryList = connectionBean.executeBeanQuery(query);
+			for(int i = 0; i < categoryQueryList.size(); i++) {
+				categoryName = categoryQueryList.get(i).get(0);
+				Category category = new Category(categoryName);
+				categoryList.add(category);
 			}
-			
 			return categoryList;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		finally {
-			if(rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
 		return null;
 	}
 	
-	//returns Category object based on category name
 	public Category getCategoryByName(String name) {
-		Category c;
+		String query = "SELECT * FROM category WHERE categoryName = '" + name + "';";
+		List<List<String>> categoryQueryList = null;
+		String categoryName = null;
+		Category category = null;
 		
 		try {
-			conn = connector.getConnection();
-			String query = "SELECT * FROM category WHERE categoryName = '" + name + "';";
-			statement = conn.prepareStatement(query);
-			rs = statement.executeQuery(query);
-			
-			if(rs.next()) {
-				c = new Category(rs.getString("categoryName"));
-				return c;
-			}
-			
-		} 
-		catch(Exception e) {e.printStackTrace();}
-		finally {
-			if(rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			categoryQueryList = connectionBean.executeBeanQuery(query);
+			for(int i = 0; i < categoryQueryList.size(); i++) {
+				categoryName = categoryQueryList.get(i).get(0);
+				System.out.println(categoryName);
+				category = new Category(categoryName);
+				return category;
 			}
 		}
-		
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
-	
-
 }

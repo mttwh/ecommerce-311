@@ -60,7 +60,8 @@
 		</div>
 		<c:if test="${customer.customerUsername != null}">
 			<script>
-				var logoutForm = "<form id='logout-area' action='logout' method='post'>" +
+				var logoutForm = "<p>Welcome, ${customer.customerUsername}. You have successfully logged in!</p>" +
+								"<form id='logout-area' action='logout' method='post'>" +
 								"<input type='submit' name='logoutButton' value='Logout'></form>";
 				document.getElementById("login-form").innerHTML=logoutForm;
 			</script>

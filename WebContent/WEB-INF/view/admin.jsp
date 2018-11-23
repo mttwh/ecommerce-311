@@ -56,11 +56,13 @@
 						<div id="productButtons">
 							<form action="deleteProduct" method="post">
 								<input type="hidden" name="productToDelete" value="${product.productName}">
-								<input type="submit" name="deleteButton" value="Delete">
+								<input type="submit" name="deleteButton" value="Delete"
+								  onclick="return confirm('Are you sure?')">
 							</form>
 							<form action="updateProduct" method="post">
 								<input type="hidden" name="productToUpdate" value="${product.productName}">
-								<input type="submit" name="updateButton" value="Update Product">
+								<input type="submit" name="updateButton" value="Update Product"
+								  onclick="return confirm('Are you sure?')">
 							</form>
 						</div>
 					</td>
@@ -71,6 +73,24 @@
 	<div id="addProductMessage"></div>
 	<c:set var="product" scope="request" value="${product}"/>
 	<c:choose>
+		<c:when test="${addMessage == 'exists'}">
+			<script>
+				var message = "<span id='fail-popup'>Product already exists</span>";
+				document.getElementById("addProductMessage").innerHTML=message;
+			</script>
+		</c:when>
+		<c:when test="${addMessage == 'empty-fields'}">
+			<script>
+				var message = "<span id='fail-popup'>All fields are required</span>";
+				document.getElementById("addProductMessage").innerHTML=message;
+			</script>
+		</c:when>
+		<c:when test="${addMessage == 'invalid-price'}">
+			<script>
+				var message = "<span id='fail-popup'>Product price is invalid. Must be number between 0 and 500.</span>";
+				document.getElementById("addProductMessage").innerHTML=message;
+			</script>
+		</c:when>
 		<c:when test="${product.productName == null}">
 			<script>
 				var message = "<span class='smallText'>Fill in above form to add product to inventory.</span>";
@@ -84,6 +104,5 @@
 			</script>
 		</c:otherwise>
 	</c:choose>
-
 </body>
 </html>

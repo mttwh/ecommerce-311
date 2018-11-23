@@ -45,4 +45,12 @@ public class Customer {
 		this.customerPassword = customerPassword;
 	}
 
+	public String getCustomerEmail() {
+		return customerEmail;
+	}
+
+	public void setCustomerEmail(String customerEmail) {
+		this.customerEmail = customerEmail;
+	}
+
 }

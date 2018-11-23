@@ -1,67 +1,36 @@
 package beans;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 
-import databaseAccess.DatabaseController;
 
 public class AdminBean {
-	private DatabaseController connector;
-	private Connection conn = null;
-	private PreparedStatement statement = null;
-	private ResultSet rs = null;
+	private ConnectionBean connectionBean;
 	
 	public AdminBean() {
-		connector = new DatabaseController();
+		connectionBean = new ConnectionBean();
 	}
 	
 	public String checkAdmin(String username, String password) {
+		String query = ("SELECT * FROM admin WHERE "
+				+ "adminUsername = '" + username + "' AND "
+				+ "adminPassword = '" + password + "'");
+		List<List<String>> adminCredsList = null;
+		String uname = null, psswd = null;
+		
 		try {
-			conn = connector.getConnection();
-			String query = ("SELECT * FROM admin WHERE "
-					+ "adminUsername = '" + username + "' AND "
-					+ "adminPassword = '" + password + "'");
-			statement = conn.prepareStatement(query);
-			rs = statement.executeQuery();
-			
-			if(rs.next()) {
-				return "success";
+			adminCredsList = connectionBean.executeBeanQuery(query);
+			for(int i = 0; i < adminCredsList.size(); i++) {
+				uname = adminCredsList.get(i).get(0);
+				psswd = adminCredsList.get(i).get(1);
 			}
-			else {
-				return "fail";
+			
+			if(uname != null && psswd != null) {
+				return "success";
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		finally {
-			if(rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
+		return "fail";
 	}
 }
