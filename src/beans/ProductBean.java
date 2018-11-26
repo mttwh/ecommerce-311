@@ -88,6 +88,8 @@ public class ProductBean {
 	}
 	
 	public void deleteProductByName(String productName) {
+		
+		
 		try {
 			String query = "DELETE FROM product WHERE productName = '" + productName + "'";
 			connectionBean.executeBeanUpdate(query);
@@ -96,7 +98,20 @@ public class ProductBean {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public String serachProductByName(List<Product> prodList, String searchedProduct) {
+		try {
+			for(int i = 0; i < prodList.size(); i++) {
+				if(prodList.get(i).getProductName().equals(searchedProduct)) {
+					return prodList.get(i).getCategoryName();
+				}
+			}
+			System.out.println("not found");
+		}catch(Exception e) {
+				e.printStackTrace();
+			}
+		return null;
+	}
 	
 	public List<Product> getProducts() {
 		try {
