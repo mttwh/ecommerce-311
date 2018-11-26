@@ -23,7 +23,7 @@ public class CartItem {
 		return quantity;
 	}
 
-	private void setQuantity(int quantity) {
+	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 
