@@ -3,18 +3,11 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <jsp:include page="../jspf/header.jspf" />
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
 
 	<h2>Welcome to the admin page</h2>
 	<p>Click <a href="index.jsp">Here</a> to return to the home page.</p>
 	<p>This is the page where store managers can add, remove, or update products from the site</p>
-	<br /><hr>
+	<hr>
 	
 	<div id="login-form">
 		<form action="addProduct" method="POST">
@@ -104,5 +97,3 @@
 			</script>
 		</c:otherwise>
 	</c:choose>
-</body>
-</html>

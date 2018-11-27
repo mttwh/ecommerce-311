@@ -3,14 +3,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="WEB-INF/jspf/header.jspf" />
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<title>Grocery Store Welcome Page</title>
-		<link rel="stylesheet" href="styles/styles.css">
-	</head>
-	<body>
 		<div id="hello-user"></div>
 		<c:set var="customer" scope="session" value="${customer}"/>
 		<c:choose>
@@ -37,14 +29,6 @@
 				<li><a href="display">About us</a></li>		
 			</ul>
 		</div>
-		<%-- 
-  <div style="text-align:right;" class="search-container">
-    <form action="/action_page.php">
-      <input type="text" placeholder="Search.." name="productName">
-      <button type="submit">Submit</button>
-    </form>
-  </div>	--%>
-
 	<div>
 		<form id="search-bar" action="search" method="POST">
 	    	<input type="text" placeholder="Search.." name="searchedProduct">
@@ -74,7 +58,8 @@
 		</div>
 		<c:if test="${customer.customerUsername != null}">
 			<script>
-				var logoutForm = "<form id='logout-area' action='logout' method='post'>" +
+				var logoutForm = "<p>Welcome, ${customer.customerUsername}. You have successfully logged in!</p>" +
+								"<form id='logout-area' action='logout' method='post'>" +
 								"<input type='submit' name='logoutButton' value='Logout'></form>";
 				document.getElementById("login-form").innerHTML=logoutForm;
 			</script>
@@ -100,5 +85,3 @@
 				</c:forEach>
 			</table>
 		</div>
-	</body>
-</html>

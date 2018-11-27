@@ -46,7 +46,6 @@ public class CategoryBean {
 			categoryQueryList = connectionBean.executeBeanQuery(query);
 			for(int i = 0; i < categoryQueryList.size(); i++) {
 				categoryName = categoryQueryList.get(i).get(0);
-				System.out.println(categoryName);
 				category = new Category(categoryName);
 				return category;
 			}

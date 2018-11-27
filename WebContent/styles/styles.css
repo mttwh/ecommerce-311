@@ -126,6 +126,7 @@ tr:hover td form{
 }
 
 .smallText { font-size: small }
+
 .smallLightText {
 	font-size: small;
 	color: #808080;
@@ -151,12 +152,6 @@ tr:hover td form{
 	float: left;
 }
 
-#login-area {
-}
-
-#logout-area {
-}
-
 .category-rows {
 	float: left;
 	width: 70%;
@@ -180,10 +175,6 @@ tr:hover td form{
 	height: 400px;
 	overflow-y: scroll;
 	display: block;
-}
-
-#hello-user {
-	
 }
 
 #quantityButtons form input {
@@ -212,17 +203,8 @@ tr:hover td form{
 	margin: 5px;
 }
 
-
-
-
-
-
-
 /**
 ABOUT US Page */
-
-
-
 
 #square{	
 	position:absolute;

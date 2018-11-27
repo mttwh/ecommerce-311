@@ -2,9 +2,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="../jspf/header.jspf" />
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-<body>
 	<div id="admin-return">
 		<form action="admin" method="post">
 			<h3>Click below to return to admin page.</h3>
@@ -34,5 +32,3 @@
 			
 		</form>
 	</div>
-</body>
-</html>

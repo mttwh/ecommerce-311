@@ -105,7 +105,6 @@ public class ControllerServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		Cart cart = (Cart) session.getAttribute("shoppingCart");
 		String loginMessage = null;
-		String registerMessage = null; //TODO: implement this
 
 		if(userPath.equals("/addToCart")) {
 			if(cart == null)
@@ -263,7 +262,6 @@ public class ControllerServlet extends HttpServlet {
 			Customer customer = new Customer(username, password, fullName, email);
 			
 			if(username.isEmpty() || password.isEmpty() || fullName.isEmpty() || email.isEmpty()) {
-				registerMessage = "fail";
 				request.getRequestDispatcher("/register").forward(request, response);
 				return;
 			}
@@ -277,7 +275,6 @@ public class ControllerServlet extends HttpServlet {
 		else if(userPath.equals("/search")) {
 			List<Product> prodList = productBean.getProducts();
 			String searchedProduct = request.getParameter("searchedProduct");
-			System.out.println(searchedProduct);
 			String category = productBean.serachProductByName(prodList, searchedProduct);
 			String catUrl = "/category?" + category;
 			request.getRequestDispatcher(catUrl).forward(request, response);
