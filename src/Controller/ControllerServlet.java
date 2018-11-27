@@ -37,7 +37,9 @@ import model.Product;
 					  "/logout",
 					  "/login",
 					  "/updateQuantity",
-					  "/updateProduct"})
+					  "/updateProduct",
+					  "/display",
+					  "/search"})
 public class ControllerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8289078937910112382L;
@@ -73,8 +75,9 @@ public class ControllerServlet extends HttpServlet {
 		
 		String userPath = request.getServletPath();
 
-		if(userPath.equals("/category"))
-		{
+
+		if(userPath.equals("/category")) {
+			
 			String categoryName = request.getQueryString();
 
 			if (categoryName != null) 
@@ -85,6 +88,7 @@ public class ControllerServlet extends HttpServlet {
 				session.setAttribute("categoryProductList", categoryProductList);
 			}
 		}
+
 		
 		String url = "/WEB-INF/view" + userPath + ".jsp";
 		
@@ -268,6 +272,17 @@ public class ControllerServlet extends HttpServlet {
 				request.getRequestDispatcher("/").forward(request, response);
 				return;
 			}
+		}
+		
+		else if(userPath.equals("/search")) {
+			List<Product> prodList = productBean.getProducts();
+			String searchedProduct = request.getParameter("searchedProduct");
+			System.out.println(searchedProduct);
+			String category = productBean.serachProductByName(prodList, searchedProduct);
+			String catUrl = "/category?" + category;
+			request.getRequestDispatcher(catUrl).forward(request, response);
+			//doGet(request, response);
+			return;
 		}
 		
 		String url = "/WEB-INF/view" + userPath + ".jsp";

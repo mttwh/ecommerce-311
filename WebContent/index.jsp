@@ -34,9 +34,23 @@
 				<li><a href="category">Go Shopping</a></li>
 				<li><a href="cart">Shopping Cart</a></li>
 				<li><a href="register">Create Account</a></li>
+				<li><a href="display">About us</a></li>		
 			</ul>
 		</div>
-		<br /><br />
+		<%-- 
+  <div style="text-align:right;" class="search-container">
+    <form action="/action_page.php">
+      <input type="text" placeholder="Search.." name="productName">
+      <button type="submit">Submit</button>
+    </form>
+  </div>	--%>
+
+	<div>
+		<form id="search-bar" action="search" method="POST">
+	    	<input type="text" placeholder="Search.." name="searchedProduct">
+      	    <button type="submit">Submit</button>
+		</form>
+	</div>
 		<hr>
 		<div id="login-form">
 			<form id="login-area" action="login" method="POST">
@@ -60,8 +74,7 @@
 		</div>
 		<c:if test="${customer.customerUsername != null}">
 			<script>
-				var logoutForm = "<p>Welcome, ${customer.customerUsername}. You have successfully logged in!</p>" +
-								"<form id='logout-area' action='logout' method='post'>" +
+				var logoutForm = "<form id='logout-area' action='logout' method='post'>" +
 								"<input type='submit' name='logoutButton' value='Logout'></form>";
 				document.getElementById("login-form").innerHTML=logoutForm;
 			</script>

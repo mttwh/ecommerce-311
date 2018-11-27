@@ -15,6 +15,7 @@
 			<li class="active-link"><a href="#">Go Shopping</a></li>
 			<li><a href="cart">Shopping Cart</a></li>
 			<li><a href="register">Create Account</a></li>
+			<li><a href="display">About us</a></li>
 		</ul>
 	</div>
 	<br /><br />
