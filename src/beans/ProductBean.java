@@ -12,6 +12,7 @@ import databaseAccess.DatabaseController;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+import model.Category;
 import model.Product;
 
 public class ProductBean {
@@ -20,9 +21,11 @@ public class ProductBean {
 	Connection conn = null;
 	PreparedStatement statement = null;
 	ResultSet rs = null;
+	CategoryBean categoryBean;
 	
 	public ProductBean() {
 		connectionBean = new ConnectionBean();
+		categoryBean = new CategoryBean();
 	}
 	
 	public void replaceProduct(Product product, String oldProductName) {
@@ -99,11 +102,12 @@ public class ProductBean {
 		}
 	}
 
-	public String serachProductByName(List<Product> prodList, String searchedProduct) {
+	public Category serachProductByName(List<Product> prodList, String searchedProduct) {
 		try {
 			for(int i = 0; i < prodList.size(); i++) {
 				if(prodList.get(i).getProductName().equals(searchedProduct)) {
-					return prodList.get(i).getCategoryName();
+					Category category = categoryBean.getCategoryByName(prodList.get(i).getCategoryName());
+					return category;
 				}
 			}
 			System.out.println("not found");

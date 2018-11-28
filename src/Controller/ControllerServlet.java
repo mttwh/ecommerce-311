@@ -275,10 +275,16 @@ public class ControllerServlet extends HttpServlet {
 		else if(userPath.equals("/search")) {
 			List<Product> prodList = productBean.getProducts();
 			String searchedProduct = request.getParameter("searchedProduct");
-			String category = productBean.serachProductByName(prodList, searchedProduct);
+			Category category = productBean.serachProductByName(prodList, searchedProduct);
+			if(category == null) {
+				request.getRequestDispatcher("/").forward(request, response);
+				return;
+			}
 			String catUrl = "/category?" + category;
+			categoryProductList = productBean.getProductsByCategory(category.getCategoryName());
+			session.setAttribute("selectedCategory", category);
+			session.setAttribute("categoryProductList", categoryProductList);
 			request.getRequestDispatcher(catUrl).forward(request, response);
-			//doGet(request, response);
 			return;
 		}
 		
