@@ -14,14 +14,18 @@ import beans.AdminBean;
 import beans.CategoryBean;
 import beans.CustomerBean;
 import beans.ProductBean;
+import beans.WishlistBean;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import model.Cart;
 import model.Category;
 import model.Customer;
 import model.Product;
+import model.WishList;
 
 @WebServlet(name="/ControllerServlet",
 		loadOnStartup = 1,
@@ -39,16 +43,23 @@ import model.Product;
 					  "/updateQuantity",
 					  "/updateProduct",
 					  "/display",
-					  "/search"})
+					  "/search",
+                                          "/wishlist",
+                                          "/moveToCart",
+                                          "/removeFromWishlist",
+                                          "/addToWishlist"})
 public class ControllerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8289078937910112382L;
 	private List<Product> categoryProductList;
+        private List<Product> aListOfProducts;
 	private List<Product> allProductList;
+        private List<Product> wishProductList;
 	private ProductBean productBean;
 	private AdminBean adminBean;
 	private CategoryBean categoryBean;
 	private CustomerBean customerBean;
+        private WishlistBean wishlistBean;
 	private String adminLoginMessage = null;
 	private String addMessage = null;
 
@@ -57,7 +68,8 @@ public class ControllerServlet extends HttpServlet {
         productBean = new ProductBean();
         adminBean = new AdminBean();
         categoryBean = new CategoryBean();
-        customerBean = new CustomerBean();        
+        customerBean = new CustomerBean(); 
+        wishlistBean = new WishlistBean();
     }
     
     
@@ -67,6 +79,8 @@ public class ControllerServlet extends HttpServlet {
     	List<Category> categoryList = new ArrayList<>();
     	categoryList = categoryBean.getCategories();
     	getServletContext().setAttribute("categories", categoryList);
+        wishProductList = new ArrayList<>();
+
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -105,6 +119,7 @@ public class ControllerServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		Cart cart = (Cart) session.getAttribute("shoppingCart");
 		String loginMessage = null;
+                
 
 		if(userPath.equals("/addToCart")) {
 			if(cart == null)
@@ -123,8 +138,92 @@ public class ControllerServlet extends HttpServlet {
 
 			userPath = "/category";
 		}
+                
+                else if(userPath.equals("/addToWishlist")){
+                    
+                    HttpSession UserSession = request.getSession();
+		    Product wishlistProduct = new Product();
+                    WishList wishlist = new WishList();
+		    String productName = request.getParameter("productName");
+                    Customer customer = (Customer) request.getSession().getAttribute("customer");
+			
+			if(productName != null && !productName.isEmpty())
+			{
+	
+                                Product product = productBean.getProductByName(productName);
+                                wishlist.setProduct(product);
+                                wishlist.setCustomer(customer);
+                                if (wishProductList.size()== 0){
+                                  wishProductList.add(product);
+  
+                                }
+                                else{
+                                    boolean productNotFound = false;
+                                    for(int i = 0; i < wishProductList.size(); i++){
+                                        if(wishProductList.get(i).getProductName().equals(productName)){
+                                            productNotFound = true;
+                                        }
+                                     
+                                    }
+                                    if(!productNotFound){
+                                        wishProductList.add(product);
+                                    }
+                                }
+                                
+                                UserSession.setAttribute("wishlist", wishProductList);
+
+ 			}
 		
-		else if(userPath.equals("/deleteProduct")) {
+		userPath = "/category";
+                }
+                
+                else if (userPath.equals("/wishlist")) {
+                    
+                    HttpSession userSession = request.getSession(); //does this grab new session?
+                    Customer customer = (Customer) userSession.getAttribute("customer");
+		    String customerUserName = customer.getCustomerUsername();
+                    userPath = "/wishlist";
+
+		}
+                
+                else if (userPath.equals("/removeFromWishlist")){
+                    
+                    String productName = request.getParameter("productName");
+                    for(int i = 0; i < wishProductList.size(); i++){
+                            if(wishProductList.get(i).getProductName().equals(productName)){
+                                wishProductList.remove(i);
+                            }
+                    }
+                    userPath = "/wishlist";
+                    
+                }
+                
+                //wishlist moveToCart
+                else if(userPath.equals("/moveToCart")) {
+			if(cart == null)
+			{
+				cart = new Cart();
+				session.setAttribute("shoppingCart", cart);
+			}
+			
+			String productName = request.getParameter("productName");
+			
+			if(productName != null && !productName.isEmpty())
+			{
+				Product product = productBean.getProductByName(productName);
+				cart.addItem(product);
+                                for(int i = 0; i < wishProductList.size(); i++){
+                                    if(wishProductList.get(i).getProductName().equals(productName)){
+                                        wishProductList.remove(i);
+                                    }
+                                }
+			}
+
+			userPath = "/wishlist";
+                                
+                    } 
+                
+                else if(userPath.equals("/deleteProduct")) {
 			String productToDelete = request.getParameter("productToDelete");
 			productBean.deleteProductByName(productToDelete);
 			allProductList = productBean.getProducts();
@@ -237,11 +336,13 @@ public class ControllerServlet extends HttpServlet {
 		else if(userPath.equals("/login")) {
 			String username = request.getParameter("customerUsername");
 			String password = request.getParameter("customerPassword");
+                        
 			
 			if(customerBean.validateCredentials(username, password)) {
 				HttpSession userSession = request.getSession(true); //does this grab new session?
 				Customer customer = customerBean.getCustomerByUsername(username);
 				userSession.setAttribute("customer", customer);
+                                //session.setAttribute("user", customer);
 				loginMessage = "success";
 				request.setAttribute("message", loginMessage);
 			}
