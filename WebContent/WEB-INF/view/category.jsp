@@ -10,6 +10,7 @@
 			<li><a href="cart">Shopping Cart</a></li>
 			<li><a href="register">Create Account</a></li>
 			<li><a href="display">About us</a></li>
+                        <li><a href="wishlist">Wishlist</a></li>
 		</ul>
 	</div>
 	<br /><br />
@@ -26,6 +27,7 @@
 				<th>Product Name</th>
 				<th>Product Price</th>
 				<th>Add to Cart</th>
+                                <th>Add to Wishlist</th>
 			</tr>
 			<%-- Receive list of products relevant to the selected category 
 			and display them on the screen - product list received from ControllerServlet doGet method --%>
@@ -42,6 +44,12 @@
 						<form action = "addToCart" method="POST">
 							<input type="hidden" name="productName" value="${product.productName}">
 							<input class="button" type="submit" name="addToCart" value="Add To Cart">
+						</form>
+					</td>
+                                        <td>
+						<form action = "addToWishlist" method="POST">
+							<input type="hidden" name="productName" value="${product.productName}">
+							<input class="button" type="submit" name="addToWishlist" value="Add To Wishlist">
 						</form>
 					</td>
 				</tr>

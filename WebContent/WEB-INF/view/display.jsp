@@ -8,6 +8,7 @@
 	<li><a href="cart">Shopping Cart</a></li>
 	<li><a href="register">Create Account</a></li>
 	<li class="active-link"><a href="#">About us</a></li>
+        <li><a href="wishlist">Wishlist</a></li>
 
 	<div class="infoTitle">Our Missions</div>
 	<div class="info">
