@@ -1,5 +1,6 @@
 package model;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,11 +60,14 @@ public class Cart {
 	}
 	
 	public double calculateTotal() {
-		
+		double cartTotal = 0;
 		for(int i = 0; i < getCartItems().size(); i++) {
 			Product product = getCartItems().get(i).getProduct();
-			int quantity = getCartItems().get(i).getQuantity();;
-			setCartTotal(getCartTotal() + quantity * Double.parseDouble(product.getProductName()));
+			int quantity = getCartItems().get(i).getQuantity();
+			DecimalFormat df = new DecimalFormat("#.##");
+			cartTotal += (quantity * Double.parseDouble(product.getProductPrice()));
+			cartTotal = Double.valueOf(df.format(cartTotal));
+			setCartTotal(cartTotal);
 		}
 		return getCartTotal();
 	}

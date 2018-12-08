@@ -39,7 +39,9 @@ import model.Product;
 					  "/updateQuantity",
 					  "/updateProduct",
 					  "/display",
-					  "/search"})
+					  "/search",
+					  "/checkout",
+					  "/confirmation"})
 public class ControllerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8289078937910112382L;
@@ -71,8 +73,8 @@ public class ControllerServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Category selectedCategory;
-		HttpSession session = request.getSession();
-		
+		HttpSession session = request.getSession(false);
+		String checkoutLoginMessage = null;
 		String userPath = request.getServletPath();
 
 
@@ -86,6 +88,28 @@ public class ControllerServlet extends HttpServlet {
 				session.setAttribute("selectedCategory", selectedCategory);
 				categoryProductList = productBean.getProductsByCategory(categoryName);
 				session.setAttribute("categoryProductList", categoryProductList);
+			}
+		}
+		
+		else if(userPath.equals("/cart")) {
+			//do stuff to display balance on page
+			Cart cart = (Cart) session.getAttribute("shoppingCart");
+			if(cart != null) {
+				double cartTotal = cart.calculateTotal();
+				request.setAttribute("cartTotal", cartTotal);
+				System.out.println(cartTotal);
+			}
+		}
+		
+		else if(userPath.equals("/checkout")) {
+			if(request.getSession().getAttribute("customer") == null) {
+				checkoutLoginMessage = "Login";
+				request.setAttribute("checkoutLoginMessage", checkoutLoginMessage);
+				request.getRequestDispatcher("/").forward(request, response);
+				return;
+			}
+			else {
+				System.out.println("User logged in");
 			}
 		}
 
@@ -102,9 +126,10 @@ public class ControllerServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String userPath = request.getServletPath();
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(false);
 		Cart cart = (Cart) session.getAttribute("shoppingCart");
 		String loginMessage = null;
+		String addToCartMessage = null;
 
 		if(userPath.equals("/addToCart")) {
 			if(cart == null)
@@ -119,6 +144,8 @@ public class ControllerServlet extends HttpServlet {
 			{
 				Product product = productBean.getProductByName(productName);
 				cart.addItem(product);
+				addToCartMessage = "Added";
+				request.setAttribute("addToCartMessage", addToCartMessage);
 			}
 
 			userPath = "/category";
@@ -194,6 +221,7 @@ public class ControllerServlet extends HttpServlet {
 			
 			if(request.getParameter("increaseQuantity") != null) {
 				cart.getCartItemByName(productToUpdate).increaseQuantity();
+				
 			}
 			else if(request.getParameter("decreaseQuantity") != null) {
 				cart.getCartItemByName(productToUpdate).decreaseQuantity();
@@ -239,7 +267,7 @@ public class ControllerServlet extends HttpServlet {
 			String password = request.getParameter("customerPassword");
 			
 			if(customerBean.validateCredentials(username, password)) {
-				HttpSession userSession = request.getSession(true); //does this grab new session?
+				HttpSession userSession = request.getSession(); //does this grab new session?
 				Customer customer = customerBean.getCustomerByUsername(username);
 				userSession.setAttribute("customer", customer);
 				loginMessage = "success";
@@ -287,6 +315,27 @@ public class ControllerServlet extends HttpServlet {
 			request.getRequestDispatcher(catUrl).forward(request, response);
 			return;
 		}
+		
+		else if(userPath.equals("/cart")) {
+			doGet(request, response);
+			return;
+		}
+		
+		else if(userPath.equals("/checkout")) {
+			if(cart != null) {
+				double cartTotal = cart.calculateTotal();
+				session.setAttribute("cartTotal", cartTotal);
+				doGet(request, response);
+				return;
+			}
+		}
+		
+		else if(userPath.equals("/confirmation")) {
+			
+			System.out.println("Hello");
+		}
+		
+		
 		
 		String url = "/WEB-INF/view" + userPath + ".jsp";
 		
