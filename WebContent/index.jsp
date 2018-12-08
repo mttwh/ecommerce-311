@@ -34,6 +34,7 @@
 			<li><a href="cart">Shopping Cart</a></li>
 			<li><a href="register">Create Account</a></li>
 			<li><a href="display">About us</a></li>		
+			<li><a href="wishlist">Wishlist</a></li>
 		</ul>
 	</div>
 <div id="search-box">

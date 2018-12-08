@@ -14,115 +14,123 @@ import beans.AdminBean;
 import beans.CategoryBean;
 import beans.CustomerBean;
 import beans.ProductBean;
+import beans.WishlistBean;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import model.Cart;
 import model.Category;
 import model.Customer;
 import model.Product;
+import model.WishList;
 
-@WebServlet(name="/ControllerServlet",
-		loadOnStartup = 1,
-		//url patterns that are handled by this Servlet
-		urlPatterns= {"/category",
-					  "/register",
-					  "/addToCart",
-					  "/cart",
-					  "/adminLogin",
-					  "/admin",
-					  "/deleteProduct",
-					  "/addProduct",
-					  "/logout",
-					  "/login",
-					  "/updateQuantity",
-					  "/updateProduct",
-					  "/display",
-					  "/search",
-					  "/checkout",
-					  "/confirmation"})
+@WebServlet(name = "/ControllerServlet", loadOnStartup = 1,
+		// url patterns that are handled by this Servlet
+		urlPatterns = { "/category", 
+						"/register", 
+						"/addToCart", 
+						"/cart", 
+						"/adminLogin", 
+						"/admin", 
+						"/deleteProduct",
+						"/addProduct", 
+						"/logout", 
+						"/login", 
+						"/updateQuantity", 
+						"/updateProduct", 
+						"/display", 
+						"/search",
+						"/checkout", 
+						"/confirmation",
+						"/wishlist",
+						"/moveToCart",
+						"/removeFromWishlist",
+						"/addToWishlist"})
 public class ControllerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8289078937910112382L;
 	private List<Product> categoryProductList;
+	private List<Product> aListOfProducts;
+	private List<Product> wishProductList;
 	private List<Product> allProductList;
 	private ProductBean productBean;
 	private AdminBean adminBean;
 	private CategoryBean categoryBean;
 	private CustomerBean customerBean;
+	private WishlistBean wishlistBean;
 	private String adminLoginMessage = null;
 	private String addMessage = null;
 
-    public ControllerServlet() {
-        super();
-        productBean = new ProductBean();
-        adminBean = new AdminBean();
-        categoryBean = new CategoryBean();
-        customerBean = new CustomerBean();        
-    }
-    
-    
-    //init method called once upon application deployment.
-    //category list will be stored in an application context variable for use across the application
-    public void init() throws ServletException {
-    	List<Category> categoryList = new ArrayList<>();
-    	categoryList = categoryBean.getCategories();
-    	getServletContext().setAttribute("categories", categoryList);
-    }
+	public ControllerServlet() {
+		super();
+		productBean = new ProductBean();
+		adminBean = new AdminBean();
+		categoryBean = new CategoryBean();
+		customerBean = new CustomerBean();
+		wishlistBean = new WishlistBean();
+	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	// init method called once upon application deployment.
+	// category list will be stored in an application context variable for use
+	// across the application
+	public void init() throws ServletException {
+		List<Category> categoryList = new ArrayList<>();
+		categoryList = categoryBean.getCategories();
+		getServletContext().setAttribute("categories", categoryList);
+		wishProductList = new ArrayList<>();
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		Category selectedCategory;
 		HttpSession session = request.getSession(false);
 		String checkoutLoginMessage = null;
 		String userPath = request.getServletPath();
 
+		if (userPath.equals("/category")) {
 
-		if(userPath.equals("/category")) {
-			
 			String categoryName = request.getQueryString();
 
-			if (categoryName != null) 
-			{
+			if (categoryName != null) {
 				selectedCategory = categoryBean.getCategoryByName(categoryName);
 				session.setAttribute("selectedCategory", selectedCategory);
 				categoryProductList = productBean.getProductsByCategory(categoryName);
 				session.setAttribute("categoryProductList", categoryProductList);
 			}
 		}
-		
-		else if(userPath.equals("/cart")) {
-			//do stuff to display balance on page
+
+		else if (userPath.equals("/cart")) {
+			// do stuff to display balance on page
 			Cart cart = (Cart) session.getAttribute("shoppingCart");
-			if(cart != null) {
+			if (cart != null) {
 				double cartTotal = cart.calculateTotal();
 				request.setAttribute("cartTotal", cartTotal);
 				System.out.println(cartTotal);
 			}
 		}
-		
-		else if(userPath.equals("/checkout")) {
-			if(request.getSession().getAttribute("customer") == null) {
+
+		else if (userPath.equals("/checkout")) {
+			if (request.getSession().getAttribute("customer") == null) {
 				checkoutLoginMessage = "Login";
 				request.setAttribute("checkoutLoginMessage", checkoutLoginMessage);
 				request.getRequestDispatcher("/").forward(request, response);
 				return;
-			}
-			else {
+			} else {
 				System.out.println("User logged in");
 			}
 		}
 
-		
 		String url = "/WEB-INF/view" + userPath + ".jsp";
-		
+
 		try {
 			request.getRequestDispatcher(url).forward(request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String userPath = request.getServletPath();
@@ -151,6 +159,81 @@ public class ControllerServlet extends HttpServlet {
 			userPath = "/category";
 		}
 		
+		else if (userPath.equals("/addToWishlist")) {
+
+			HttpSession UserSession = request.getSession();
+			Product wishlistProduct = new Product();
+			WishList wishlist = new WishList();
+			String productName = request.getParameter("productName");
+			Customer customer = (Customer) request.getSession().getAttribute("customer");
+
+			if (productName != null && !productName.isEmpty()) {
+
+				Product product = productBean.getProductByName(productName);
+				wishlist.setProduct(product);
+				wishlist.setCustomer(customer);
+				if (wishProductList.size() == 0) {
+					wishProductList.add(product);
+				} else {
+					boolean productNotFound = false;
+					for (int i = 0; i < wishProductList.size(); i++) {
+						if (wishProductList.get(i).getProductName().equals(productName)) {
+							productNotFound = true;
+						}
+
+					}
+					if (!productNotFound) {
+						wishProductList.add(product);
+					}
+				}
+
+				UserSession.setAttribute("wishlist", wishProductList);
+			}
+			userPath = "/category";
+		}
+		
+        else if (userPath.equals("/wishlist")) {
+            
+            HttpSession userSession = request.getSession(); //does this grab new session?
+            Customer customer = (Customer) userSession.getAttribute("customer");
+            String customerUserName = customer.getCustomerUsername();
+            userPath = "/wishlist";
+		}
+
+		else if (userPath.equals("/removeFromWishlist")) {
+
+			String productName = request.getParameter("productName");
+			for (int i = 0; i < wishProductList.size(); i++) {
+				if (wishProductList.get(i).getProductName().equals(productName)) {
+					wishProductList.remove(i);
+				}
+			}
+			userPath = "/wishlist";
+
+		}
+
+		// wishlist moveToCart
+		else if (userPath.equals("/moveToCart")) {
+			if (cart == null) {
+				cart = new Cart();
+				session.setAttribute("shoppingCart", cart);
+			}
+
+			String productName = request.getParameter("productName");
+
+			if (productName != null && !productName.isEmpty()) {
+				Product product = productBean.getProductByName(productName);
+				cart.addItem(product);
+				for (int i = 0; i < wishProductList.size(); i++) {
+					if (wishProductList.get(i).getProductName().equals(productName)) {
+						wishProductList.remove(i);
+					}
+				}
+			}
+			userPath = "/wishlist";
+
+		}
+
 		else if(userPath.equals("/deleteProduct")) {
 			String productToDelete = request.getParameter("productToDelete");
 			productBean.deleteProductByName(productToDelete);
@@ -265,11 +348,13 @@ public class ControllerServlet extends HttpServlet {
 		else if(userPath.equals("/login")) {
 			String username = request.getParameter("customerUsername");
 			String password = request.getParameter("customerPassword");
+                        
 			
 			if(customerBean.validateCredentials(username, password)) {
-				HttpSession userSession = request.getSession(); //does this grab new session?
+				HttpSession userSession = request.getSession(true); //does this grab new session?
 				Customer customer = customerBean.getCustomerByUsername(username);
 				userSession.setAttribute("customer", customer);
+                //session.setAttribute("user", customer);
 				loginMessage = "success";
 				request.setAttribute("message", loginMessage);
 			}
