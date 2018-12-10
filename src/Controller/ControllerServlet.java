@@ -2,6 +2,9 @@ package Controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,17 +16,24 @@ import javax.servlet.http.HttpSession;
 import beans.AdminBean;
 import beans.CategoryBean;
 import beans.CustomerBean;
+import beans.OrderBean;
 import beans.ProductBean;
 import beans.WishlistBean;
+import javaemail.javaemail;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import model.Cart;
+import model.CartItem;
 import model.Category;
 import model.Customer;
+import model.CustomerOrder;
+import model.CustomerOrderDetail;
 import model.Product;
 import model.WishList;
 
@@ -61,6 +71,8 @@ public class ControllerServlet extends HttpServlet {
 	private CategoryBean categoryBean;
 	private CustomerBean customerBean;
 	private WishlistBean wishlistBean;
+	private OrderBean orderBean;
+	
 	private String adminLoginMessage = null;
 	private String addMessage = null;
 
@@ -71,6 +83,7 @@ public class ControllerServlet extends HttpServlet {
 		categoryBean = new CategoryBean();
 		customerBean = new CustomerBean();
 		wishlistBean = new WishlistBean();
+		orderBean = new OrderBean();
 	}
 
 	// init method called once upon application deployment.
@@ -416,8 +429,30 @@ public class ControllerServlet extends HttpServlet {
 		}
 		
 		else if(userPath.equals("/confirmation")) {
+			Customer confirmedCustomer = (Customer) session.getAttribute("customer");
+			String username = confirmedCustomer.getCustomerUsername();
+			String email = confirmedCustomer.getCustomerEmail();
+			String cartTotal = Double.toString(cart.calculateTotal());
+			String timeStamp = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss").format(Calendar.getInstance().getTime());
+			List<CartItem> cartItems = cart.getCartItems();
+
+			CustomerOrder confirmedCustomerOrder = new CustomerOrder(username, email, cartTotal, timeStamp);
+			orderBean.makeCustomerOrder(confirmedCustomerOrder);
+			CustomerOrder mostRecentOrder = orderBean.getMostRecentOrderByUsername(username);
+			orderBean.saveOrderDetails(cartItems, mostRecentOrder);
 			
-			System.out.println("Hello");
+			List<CustomerOrderDetail> details = orderBean.getOrderDetailsByOrderId(mostRecentOrder.getOrderId());
+			session.setAttribute("orderDetails", details);
+			session.setAttribute("mostRecentOrder", mostRecentOrder);
+			
+			//send email to customer
+			javaemail javaemail = new javaemail();
+			String emailSubject = "Order Confirmation";
+			String emailBody = "Order Summary: \n\nOrder ID: " + mostRecentOrder.getOrderId() + 
+					"\nOrder Total $" + cartTotal + "\nOrder Date: " + mostRecentOrder.getOrderDate();
+			String recipient = mostRecentOrder.getCustomerEmail();
+			javaemail.sendEmail(recipient, emailSubject, emailBody);
+			
 		}
 		
 		

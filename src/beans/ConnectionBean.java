@@ -53,7 +53,13 @@ public class ConnectionBean {
 			while(rs.next()) {
 				tempValueList = new ArrayList<>();
 				for(int i = 1; i <= rsmd.getColumnCount(); i++) {
-					tempValueList.add(rs.getString(rsmd.getColumnName(i)));
+					try {
+						int num = Integer.parseInt(rs.getString(rsmd.getColumnName(i)));
+						tempValueList.add(Integer.toString(num));
+					}
+					catch(NumberFormatException e) {
+						tempValueList.add(rs.getString(rsmd.getColumnName(i)));
+					}
 				}
 				productValues.add(tempValueList);
 			}

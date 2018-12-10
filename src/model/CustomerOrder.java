@@ -5,12 +5,24 @@ import java.util.Date;
 public class CustomerOrder {
 	
 	private int orderId;
-	private Date dateCreated;
-	private double orderAmount;
-	private int customerId;
+	private String customerUsername;
+	private String customerEmail;
+	private String orderTotal;
+	private String orderDate;
 	
-	public CustomerOrder() {
-		
+	public CustomerOrder(String username, String email, String total, String date) {
+		this.customerUsername = username;
+		this.customerEmail = email;
+		this.orderTotal = total;
+		this.orderDate = date;
+	}
+	
+	public CustomerOrder(int id,String username, String email, String total, String date) {
+		this.orderId = id;
+		this.customerUsername = username;
+		this.customerEmail = email;
+		this.orderTotal = total;
+		this.orderDate = date;
 	}
 
 	public int getOrderId() {
@@ -21,25 +33,36 @@ public class CustomerOrder {
 		this.orderId = orderId;
 	}
 
-	public Date getDateCreated() {
-		return dateCreated;
+	public String getCustomerUsername() {
+		return customerUsername;
 	}
 
-
-	public double getOrderAmount() {
-		return orderAmount;
+	public void setCustomerUsername(String customerUsername) {
+		this.customerUsername = customerUsername;
 	}
 
-	public void setOrderAmount(double orderAmount) {
-		this.orderAmount = orderAmount;
+	public String getCustomerEmail() {
+		return customerEmail;
 	}
 
-	public int getCustomerId() {
-		return customerId;
+	public void setCustomerEmail(String customerEmail) {
+		this.customerEmail = customerEmail;
 	}
 
-	public void setCustomerId(int customerId) {
-		this.customerId = customerId;
+	public String getOrderTotal() {
+		return orderTotal;
+	}
+
+	public void setOrderTotal(String orderTotal) {
+		this.orderTotal = orderTotal;
+	}
+
+	public String getOrderDate() {
+		return orderDate;
+	}
+
+	public void setOrderDate(String orderDate) {
+		this.orderDate = orderDate;
 	}
 
 }

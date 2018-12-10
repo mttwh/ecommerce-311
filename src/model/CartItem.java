@@ -39,6 +39,10 @@ public class CartItem {
 		this.product = product;
 	}
 	
+	public String getProductPrice() {
+		return product.getProductPrice();
+	}
+	
 	public void increaseQuantity() {
 		quantity++;
 	}
