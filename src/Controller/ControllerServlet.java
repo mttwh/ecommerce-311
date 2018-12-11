@@ -180,7 +180,7 @@ public class ControllerServlet extends HttpServlet {
 			String productName = request.getParameter("productName");
 			Customer customer = (Customer) request.getSession().getAttribute("customer");
 
-			if (productName != null && !productName.isEmpty()) {
+			if (productName != null && !productName.isEmpty() && !(customer == null)) {
 
 				Product product = productBean.getProductByName(productName);
 				wishlist.setProduct(product);
