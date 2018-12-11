@@ -13,7 +13,7 @@
 <p>We have sent an email confirmation to you at ${order.customerEmail}. Below is a summary of your order.</p>
 <hr>
 <c:forEach var="orderDetails" items="${orderDetails}">
-	<p>${orderDetails.productName}: Quantity - ${orderDetails.quantity} Price - $${orderDetails.productPrice}</p>
+	<span>${orderDetails.productName}: Quantity - ${orderDetails.quantity} Price - $${orderDetails.productPrice}</span><br />
 </c:forEach>
 
 <p><a href="index.jsp">Click Here</a> to return to the home page</p>

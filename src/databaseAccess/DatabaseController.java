@@ -16,9 +16,9 @@ public class DatabaseController
 	{
 		try {
 			String driver = "com.mysql.jdbc.Driver";
-			String url = "jdbc:mysql://sql9.freesqldatabase.com:3306/sql9268278";
-			String username = "sql9268278";
-			String password = "LcXiCHr1wM";
+			String url = "jdbc:mysql://sql9.freesqldatabase.com:3306/sql9269588";
+			String username = "sql9269588";
+			String password = "KZYiqilLlV";
 			Class.forName(driver);
 			
 			Connection conn = DriverManager.getConnection(url, username, password);
