@@ -5,7 +5,6 @@
 <div>
 	<ul class="main-nav">
 		<li><a href="index.jsp">Home</a></li>
-		<li><a href="category">Go Shopping</a></li>
 		<li><a href="cart">Shopping Cart</a></li>
 		<li class="active-link"><a href="#">Create Account</a></li>
 		<li><a href="display">About us</a></li>

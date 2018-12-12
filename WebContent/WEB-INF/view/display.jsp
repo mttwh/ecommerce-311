@@ -4,7 +4,6 @@
 
 <ul class="main-nav">
 	<li><a href="index.jsp">Home</a></li>
-	<li><a href="category">Go Shopping</a></li>
 	<li><a href="cart">Shopping Cart</a></li>
 	<li><a href="register">Create Account</a></li>
 	<li class="active-link"><a href="#">About us</a></li>
